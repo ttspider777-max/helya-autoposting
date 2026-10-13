@@ -25,8 +25,12 @@ async def main():
 
     runner = web.AppRunner(api.build_app())
     await runner.setup()
-    await web.TCPSite(runner, "0.0.0.0", config.PORT).start()
-    log.info("Mini App: http://localhost:%s", config.PORT)
+    try:
+        await web.TCPSite(runner, "0.0.0.0", config.PORT).start()
+        log.info("Mini App: http://localhost:%s", config.PORT)
+    except OSError as e:
+        # бот должен работать, даже если порт занят — без Mini App
+        log.error("Mini App не запущен, порт %s занят: %s. Задайте другой порт в WEB_PORT", config.PORT, e)
 
     if config.WEBAPP_URL:
         await bot.set_chat_menu_button(

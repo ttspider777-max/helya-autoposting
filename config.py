@@ -15,11 +15,12 @@ API_ID = int(os.getenv("API_ID") or 0)
 API_HASH = os.getenv("API_HASH", "")
 
 WEBAPP_URL = os.getenv("WEBAPP_URL", "").rstrip("/")
-PORT = int(os.getenv("PORT") or 8080)
+# Свой порт для Mini App. Переменную PORT не используем: на хостинге её занимает служебный сервер
+PORT = int(os.getenv("WEB_PORT") or 8080)
 
 CRYPTOPAY_TOKEN = os.getenv("CRYPTOPAY_TOKEN", "")
 XROCKET_TOKEN = os.getenv("XROCKET_TOKEN", "")
-STAR_RATE_RUB = float(os.getenv("STAR_RATE_RUB") or 1.5)
+STAR_RATE_RUB = float((os.getenv("STAR_RATE_RUB") or "1.5").replace(",", "."))
 
 # Ключ шифрования сессий аккаунтов. Создаётся один раз и дописывается в .env;
 # если его потерять, все подключённые аккаунты придётся подключать заново.
@@ -29,8 +30,9 @@ if not SESSION_KEY:
     with open(ENV_PATH, "a", encoding="utf-8") as f:
         f.write(f"\n# Ключ шифрования сессий (не терять и не публиковать)\nSESSION_KEY={SESSION_KEY}\n")
 
-DATA_DIR = BASE_DIR / "data"
-DATA_DIR.mkdir(exist_ok=True)
+# На хостинге DATA_DIR указывает на постоянный диск, чтобы база переживала перезапуски
+DATA_DIR = Path(os.getenv("DATA_DIR") or BASE_DIR / "data")
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DATA_DIR / "bot.db"
 
 APP_NAME = "Heliys AutoPosting"
